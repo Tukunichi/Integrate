@@ -6,34 +6,43 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 
-public class MailService<T> implements Consumer<SuperClass> {
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 
-	private Map map;
-	
-	public MailService() {
-		map = new HashMap<String, List<T>>();
-	}
+
+public class MailService<T> extends HashMap<String, List<T>> implements Consumer<SuperClass> {
+
 	
 	public Map<String, List<T>> getMailBox(){
-		
-		return map;
+		return this;
 	}
-
+	
+	@Override
+	public List<T> get(Object key) {
+		// TODO Auto-generated method stub
+		if(!containsKey(key)) return Collections.<T>emptyList();
+		else return super.get(key);
+	}
 
 	@Override
 	public void accept(SuperClass t) {
 		// TODO Auto-generated method stub
-		if(map.containsKey(t.getTo())){
-			List<T> list = (List<T>) map.get(t.getTo());
+		if(containsKey(t.getTo())){
+			List<T> list = (List<T>) get(t.getTo());
 			ArrayList<T> array = new ArrayList<T>();
-			list.stream().forEach(e -> {
+			list.stream().forEachOrdered(e -> {
 				array.add(e);
 			});
 			array.add(t.getContent());
-			map.replace(t.getTo(), Arrays.asList(array.toArray()));
+			replace(t.getTo(), array);
 		}
 		else{
-			map.put((String)t.getTo(), Arrays.asList((T)t.getContent()));
+			put((String)t.getTo(), Arrays.asList((T)t.getContent()));
 		}
 	}
 
